@@ -1,38 +1,67 @@
 from csv import reader
+import random
+import xml.dom.minidom as minidom
 
 
-def search(table, search_line):
-    flag = 0
-    output = open('result2.txt', 'w')
+def nom1():
+    s = list(reader(open("books.csv", "r"), delimiter=";"))
 
-    for row in table:
-        if find_string(row[2], search_line) != -1:
-            flag += 1
-            print(f'{row[0]} {row[2]}')
-            output.write(f'{row[0]}. S/n: {row[18]} - {row[2]}, цена {row[8]} руб.\n')
+    c = 0
+    id_n = s[0].index("Название")
+    for i in s[1:]:
+        if len(i[id_n]) > 30:
+            c += 1
+        
+    print(c)
 
-    if flag == 0:
-        print('Поиск не дал результатов')
-    else:
-        print(f'Найдено позиций: {flag}')
+def nom2(author):
+    s = list(reader(open("books.csv", "r"), delimiter=";"))
 
-    output.close()
-
-
-def find_string(string, search_line):
-    lower_case = string.lower()
-    index = lower_case.find(search_line.lower())
-    return index
+    id_n, id_a, id_af, id_d = s[0].index("Название"), s[0].index("Автор"), s[0].index("Автор (ФИО)"), s[0].index("Дата поступления")
+    for i in s[1:]:
+        if author in [i[id_a], i[id_af]] and int(i[id_d].split(".")[2][:4]) >= 2018:
+            print(i[id_n])
 
 
-while True:
-    search_line = input('Введите запрос: ')
-    if search_line in ['0', '']:
-        break
+def nom3():
+    res = open("result.txt", "w", encoding="utf-8")
+    txt = list(reader(open("books.csv", "r"), delimiter=";"))
 
-    try:
-        with open('civic.csv', 'r') as csvfile:
-            table = reader(csvfile, delimiter = ';')
-            search(table, search_line)
-    except FileNotFoundError:
-        print('Файл не найден!')
+    title = txt[0]
+    lines = txt[1:]
+    random.shuffle(lines)
+    c = 1
+    id_n, id_a, id_d = title.index("Название"), title.index("Автор"), title.index("Дата поступления")
+    for i in sorted(lines[:20], key=lambda x: [x[id_a], int(x[id_d].split(".")[2][:4])]):
+        res.write(f"{c}){i[id_a]}. {id_n} - {int(i[id_d].split('.')[2][:4])}\n")
+        c += 1
+    
+    res.close()
+        
+    # print(c)
+
+
+def nom4():
+    dom = minidom.parse('currency.xml')
+    dom.normalize()
+
+    elements = dom.getElementsByTagName('Valute')
+    books_dict = {}
+
+    for node in elements:
+        for child in node.childNodes:
+            if child.nodeType == 1:
+                if child.tagName == 'Name':
+                    if child.firstChild:
+                        name = child.firstChild.data
+                if child.tagName == 'CharCode':
+                    if child.firstChild:
+                        CharCode = child.firstChild.data
+        books_dict[name] = CharCode
+
+    print(books_dict)
+
+# nom1()
+# nom2(input("Введите автора"))
+# nom3()
+# nom4()
