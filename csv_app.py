@@ -19,6 +19,7 @@ def nom2(author):
 
     id_n, id_a, id_af, id_d = s[0].index("Название"), s[0].index("Автор"), s[0].index("Автор (ФИО)"), s[0].index("Дата поступления")
     for i in s[1:]:
+        # print(i[id_af])
         if author in [i[id_a], i[id_af]] and int(i[id_d].split(".")[2][:4]) >= 2018:
             print(i[id_n])
 
@@ -62,6 +63,6 @@ def nom4():
     print(books_dict)
 
 # nom1()
-# nom2(input("Введите автора"))
+# nom2(input("Введите автора: "))
 # nom3()
-# nom4()
+nom4()
